@@ -37,7 +37,8 @@ Automate the pipeline between your reMarkable 2 tablet and Google NotebookLM. Th
 
 # License
 MIT License - Feel free to use and modify!
-How to use this on GitHub:
+
+# How to use this on GitHub:
   1. Create a new file in your repo named README.md.
   2. Copy and paste the text above into it.
   3. Create a second file named sync.gs and paste your final working code into that.
