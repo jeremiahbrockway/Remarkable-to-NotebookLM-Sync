@@ -1,0 +1,58 @@
+// 1. SETTINGS: Your Document IDs
+const NOTES_DOC_ID = '1-gV7HUL69FOV2fjrPrL9DWxv1XsCGDfRdiiunma14VI';
+const TODO_DOC_ID  = '1084BnfU83h6F7ht0rC7KQ4_6dwXKZBg9WtMj08uT4Ao';
+
+function syncEverything() {
+  Logger.log("--- Starting Global Sync ---");
+  
+  // Broadest possible search for any UNREAD emails from your reMarkable
+  var threads = GmailApp.search('is:unread from:my@remarkable.com');
+  
+  Logger.log("Total reMarkable emails found: " + threads.length);
+
+  threads.forEach(function(thread) {
+    var messages = thread.getMessages();
+    messages.forEach(function(message) {
+      if (message.isUnread()) {
+        var subject = message.getSubject();
+        var content = message.getPlainBody();
+        var targetDocId = null;
+
+        // DEBUG: This prints the exact subject to your log
+        Logger.log("IDENTIFIED SUBJECT: [" + subject + "]");
+
+        // Look for any part of your notebook names (ignoring capitalization)
+        var lowerSubject = subject.toLowerCase();
+        
+        if (lowerSubject.includes("note updates") || lowerSubject.includes("general notebook")) {
+          targetDocId = NOTES_DOC_ID;
+          Logger.log("MATCH FOUND: Routing to NOTES");
+        } 
+        else if (lowerSubject.includes("to do updates") || lowerSubject.includes("to do's")) {
+          targetDocId = TODO_DOC_ID;
+          Logger.log("MATCH FOUND: Routing to TO-DOS");
+        }
+
+        if (targetDocId) {
+          try {
+            var doc = DocumentApp.openById(targetDocId);
+            var body = doc.getBody();
+            
+            // Appends the text and markers
+            body.appendParagraph("\n--- SYNC: " + new Date().toLocaleString() + " ---");
+            body.appendHorizontalRule();
+            body.appendParagraph(content.split("Sent from my reMarkable")[0].trim());
+            
+            message.markRead();
+            Logger.log("SUCCESS: Content saved to Google Doc.");
+          } catch (e) {
+            Logger.log("ERROR: " + e.toString());
+          }
+        } else {
+          Logger.log("REJECTED: Subject didn't match 'Notes' or 'To Dos'.");
+        }
+      }
+    });
+  });
+  Logger.log("--- Sync Process Complete ---");
+}
