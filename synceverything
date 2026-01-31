@@ -1,6 +1,6 @@
 // 1. SETTINGS: Your Document IDs
-const NOTES_DOC_ID = '1-gV7HUL69FOV2fjrPrL9DWxv1XsCGDfRdiiunma14VI';
-const TODO_DOC_ID  = '1084BnfU83h6F7ht0rC7KQ4_6dwXKZBg9WtMj08uT4Ao';
+const NOTES_DOC_ID = '<Notes Document ID from Google Doc URL>';
+const TODO_DOC_ID  = '<To Do Document ID from Google Doc URL>';
 
 function syncEverything() {
   Logger.log("--- Starting Global Sync ---");
